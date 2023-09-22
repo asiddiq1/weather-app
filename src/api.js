@@ -14,25 +14,30 @@ function changeTemp(){
         let tempBool = e.target.checked
         if (tempBool){
             currTemp = true
-            getLocation(currLoc)
+            getLocationData(currLoc)
         }
         else{
             currTemp = false
-            getLocation(currLoc)
+            getLocationData(currLoc)
         }
 });
 }
 
+function getLocation(){
+    return currLoc
+}
 
-async function getLocation(location){
+
+async function getLocationData(location){
     const locationError = document.getElementById("error")
     try{
     const response = await fetch('https://api.weatherapi.com/v1/forecast.json?key=2efa87e3c68c4dfba8d05608230609&q='+location + "&days=3", {mode: 'cors'})
     response.json().then(function(response) {
       locationError.style.display = "none"
-      currLoc = response.location.name
+      let name = response.location.name
+      currLoc = name
       let forecastArr = response.forecast.forecastday
-      forecastHeader(currLoc)
+      forecastHeader(name)
       for (let f of forecastArr){
         getForecast(currTemp, f)
       }
@@ -55,17 +60,17 @@ function locationForm(){
     locationform.addEventListener("submit", (e) => {
         e.preventDefault();
         let location = document.getElementById("location-input").value;
-        getLocation(location);
+        getLocationData(location);
 
 });
 }
 
 
 export default function renderAll(){
-    getLocation(currLoc)
+    let location = getLocation();
+    getLocationData(location)
     changeTemp();
     locationForm();
-
 }
 
 
