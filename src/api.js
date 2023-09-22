@@ -5,37 +5,34 @@ import {
   } from "./ui";
 
 
-let currTemp = false; //celcius
-let currLoc = "auto:ip";
 
 function changeTemp(){
     const temp = document.getElementById("temp-toggle")
     temp.addEventListener("change", (e) => {
         let tempBool = e.target.checked
+        let currLoc = location.getLocation
         if (tempBool){
-            currTemp = true
+            location.setTemp = true
+            
             getLocationData(currLoc)
         }
         else{
-            currTemp = false
+            location.setTemp = false
             getLocationData(currLoc)
         }
 });
 }
 
-function getLocation(){
-    return currLoc
-}
-
-
-async function getLocationData(location){
+async function getLocationData(loc){
     const locationError = document.getElementById("error")
     try{
-    const response = await fetch('https://api.weatherapi.com/v1/forecast.json?key=2efa87e3c68c4dfba8d05608230609&q='+location + "&days=3", {mode: 'cors'})
+    const response = await fetch('https://api.weatherapi.com/v1/forecast.json?key=2efa87e3c68c4dfba8d05608230609&q='+loc + "&days=3", {mode: 'cors'})
     response.json().then(function(response) {
       locationError.style.display = "none"
       let name = response.location.name
-      currLoc = name
+      location.setLocation = name
+      console.log('here')
+      let currTemp = location.getTemp
       let forecastArr = response.forecast.forecastday
       forecastHeader(name)
       for (let f of forecastArr){
@@ -66,9 +63,30 @@ function locationForm(){
 }
 
 
+let location = {
+    loc: "auto:ip",
+    temp: false, 
+
+    get getLocation(){
+        return this.loc;
+    },
+
+    set setLocation(loc){
+        this.loc = loc;
+    },
+
+    get getTemp(){
+        return this.temp;
+    },
+    set setTemp(temp){
+        this.temp = temp;
+    }
+}
+
+
 export default function renderAll(){
-    let location = getLocation();
-    getLocationData(location)
+    const currLoc = location.getLocation
+    getLocationData(currLoc)
     changeTemp();
     locationForm();
 }
